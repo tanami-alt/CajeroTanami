@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -39,5 +39,29 @@ namespace CajeroAutomatico
                 ArchivoHelper.GuardarUsuarios(_usuarios);
             }
         }
+
+        // Realiza un depósito en la cuenta del usuario actual
+        public bool Depositar(decimal monto)
+        {
+            if (_usuarioActual == null) return false;
+            if (monto <= 0) return false;
+
+            _usuarioActual.Saldo += monto;
+            
+            // Registrar movimiento
+            var movimiento = new Movimiento
+            {
+                Fecha = DateTime.Now,
+                Tipo = "Deposito",
+                Monto = monto,
+                SaldoResultante = _usuarioActual.Saldo
+            };
+            ArchivoHelper.AgregarMovimiento(_usuarioActual.Id, movimiento);
+            
+            // Actualizar archivo de usuarios
+            ArchivoHelper.GuardarUsuarios(_usuarios);
+            
+            return true;
+        }
     }
-} 
+}
