@@ -30,7 +30,8 @@ class Program
             System.Console.WriteLine("1. Depositar");
             System.Console.WriteLine("2. Retirar");
             System.Console.WriteLine("3. Consultar saldo");
-            System.Console.WriteLine("4. Salir");
+            System.Console.WriteLine("4. Últimos 5 movimientos");
+            System.Console.WriteLine("5. Salir");
             System.Console.Write("Seleccione una opción: ");
             
             var opcion = System.Console.ReadLine();
@@ -47,6 +48,9 @@ class Program
                     RealizarConsultaSaldo(cajero);
                     break;
                 case "4":
+                    RealizarConsultaMovimientos(cajero);
+                    break;
+                case "5":
                     System.Console.WriteLine("¡Hasta luego!");
                     return;
                 default:
@@ -111,6 +115,22 @@ class Program
             return;
         }
         System.Console.WriteLine($"Saldo actual: ${usuario.Saldo:F2}");
+    }
+
+    private static void RealizarConsultaMovimientos(Cajero cajero)
+    {
+        var movimientos = cajero.ObtenerUltimosMovimientos(5);
+        if (movimientos.Count == 0)
+        {
+            System.Console.WriteLine("No hay movimientos registrados.");
+            return;
+        }
+
+        System.Console.WriteLine("\n=== ÚLTIMOS 5 MOVIMIENTOS ===");
+        foreach (var mov in movimientos)
+        {
+            System.Console.WriteLine($"{mov.Fecha:dd/MM/yyyy HH:mm} - {mov.Tipo} - ${mov.Monto:F2} - Saldo: ${mov.SaldoResultante:F2}");
+        }
     }
 
     private static string LeerPin()

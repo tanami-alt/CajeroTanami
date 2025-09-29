@@ -40,7 +40,6 @@ namespace CajeroAutomatico
             }
         }
 
-        // Realiza un depósito en la cuenta del usuario actual
         public bool Depositar(decimal monto)
         {
             if (_usuarioActual == null) return false;
@@ -60,7 +59,6 @@ namespace CajeroAutomatico
             return true;
         }
 
-        // Realiza un retiro validando fondos suficientes
         public bool Retirar(decimal monto)
         {
             if (_usuarioActual == null) return false;
@@ -85,6 +83,12 @@ namespace CajeroAutomatico
         {
             if (_usuarioActual == null) return null;
             return _usuarioActual.Saldo;
+        }
+
+        public List<Movimiento> ObtenerUltimosMovimientos(int cantidad = 5)
+        {
+            if (_usuarioActual == null) return new List<Movimiento>();
+            return ArchivoHelper.ObtenerUltimosMovimientos(_usuarioActual.Id, cantidad);
         }
     }
 }
