@@ -48,7 +48,6 @@ namespace CajeroAutomatico
 
             _usuarioActual.Saldo += monto;
             
-            // Registrar movimiento
             var movimiento = new Movimiento
             {
                 Fecha = DateTime.Now,
@@ -57,10 +56,28 @@ namespace CajeroAutomatico
                 SaldoResultante = _usuarioActual.Saldo
             };
             ArchivoHelper.AgregarMovimiento(_usuarioActual.Id, movimiento);
-            
-            // Actualizar archivo de usuarios
             ArchivoHelper.GuardarUsuarios(_usuarios);
-            
+            return true;
+        }
+
+        // Realiza un retiro validando fondos suficientes
+        public bool Retirar(decimal monto)
+        {
+            if (_usuarioActual == null) return false;
+            if (monto <= 0) return false;
+            if (_usuarioActual.Saldo < monto) return false;
+
+            _usuarioActual.Saldo -= monto;
+
+            var movimiento = new Movimiento
+            {
+                Fecha = DateTime.Now,
+                Tipo = "Retiro",
+                Monto = monto,
+                SaldoResultante = _usuarioActual.Saldo
+            };
+            ArchivoHelper.AgregarMovimiento(_usuarioActual.Id, movimiento);
+            ArchivoHelper.GuardarUsuarios(_usuarios);
             return true;
         }
     }

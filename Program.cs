@@ -28,7 +28,8 @@ class Program
         {
             System.Console.WriteLine("\n=== MENÚ PRINCIPAL ===");
             System.Console.WriteLine("1. Depositar");
-            System.Console.WriteLine("2. Salir");
+            System.Console.WriteLine("2. Retirar");
+            System.Console.WriteLine("3. Salir");
             System.Console.Write("Seleccione una opción: ");
             
             var opcion = System.Console.ReadLine();
@@ -39,6 +40,9 @@ class Program
                     RealizarDeposito(cajero);
                     break;
                 case "2":
+                    RealizarRetiro(cajero);
+                    break;
+                case "3":
                     System.Console.WriteLine("¡Hasta luego!");
                     return;
                 default:
@@ -63,6 +67,29 @@ class Program
             else
             {
                 System.Console.WriteLine("Error: Monto inválido o no hay sesión activa.");
+            }
+        }
+        else
+        {
+            System.Console.WriteLine("Error: Ingrese un monto válido.");
+        }
+    }
+
+    private static void RealizarRetiro(Cajero cajero)
+    {
+        System.Console.Write("Ingrese el monto a retirar: ");
+        var input = System.Console.ReadLine();
+        
+        if (decimal.TryParse(input, out var monto))
+        {
+            if (cajero.Retirar(monto))
+            {
+                var usuario = cajero.ObtenerUsuarioActual();
+                System.Console.WriteLine($"Retiro exitoso. Nuevo saldo: ${usuario?.Saldo:F2}");
+            }
+            else
+            {
+                System.Console.WriteLine("Error: Monto inválido, saldo insuficiente o no hay sesión activa.");
             }
         }
         else
