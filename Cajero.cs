@@ -90,5 +90,25 @@ namespace CajeroAutomatico
             if (_usuarioActual == null) return new List<Movimiento>();
             return ArchivoHelper.ObtenerUltimosMovimientos(_usuarioActual.Id, cantidad);
         }
+
+        public bool CambiarPin(string pinActual, string pinNuevo)
+        {
+            if (_usuarioActual == null) return false;
+            if (_usuarioActual.Pin != pinActual) return false;
+            if (string.IsNullOrWhiteSpace(pinNuevo)) return false;
+
+            _usuarioActual.Pin = pinNuevo.Trim();
+
+            var movimiento = new Movimiento
+            {
+                Fecha = DateTime.Now,
+                Tipo = "CambioClave",
+                Monto = 0m,
+                SaldoResultante = _usuarioActual.Saldo
+            };
+            ArchivoHelper.AgregarMovimiento(_usuarioActual.Id, movimiento);
+            ArchivoHelper.GuardarUsuarios(_usuarios);
+            return true;
+        }
     }
 }
