@@ -31,7 +31,8 @@ class Program
             System.Console.WriteLine("2. Retirar");
             System.Console.WriteLine("3. Consultar saldo");
             System.Console.WriteLine("4. Últimos 5 movimientos");
-            System.Console.WriteLine("5. Salir");
+            System.Console.WriteLine("5. Cambio de clave (PIN)");
+            System.Console.WriteLine("6. Salir");
             System.Console.Write("Seleccione una opción: ");
             
             var opcion = System.Console.ReadLine();
@@ -51,6 +52,9 @@ class Program
                     RealizarConsultaMovimientos(cajero);
                     break;
                 case "5":
+                    RealizarCambioClave(cajero);
+                    break;
+                case "6":
                     System.Console.WriteLine("¡Hasta luego!");
                     return;
                 default:
@@ -130,6 +134,23 @@ class Program
         foreach (var mov in movimientos)
         {
             System.Console.WriteLine($"{mov.Fecha:dd/MM/yyyy HH:mm} - {mov.Tipo} - ${mov.Monto:F2} - Saldo: ${mov.SaldoResultante:F2}");
+        }
+    }
+
+    private static void RealizarCambioClave(Cajero cajero)
+    {
+        System.Console.Write("PIN actual: ");
+        var pinActual = LeerPin();
+        System.Console.Write("PIN nuevo: ");
+        var pinNuevo = LeerPin();
+
+        if (cajero.CambiarPin(pinActual, pinNuevo))
+        {
+            System.Console.WriteLine("PIN actualizado correctamente.");
+        }
+        else
+        {
+            System.Console.WriteLine("Error: PIN actual incorrecto o PIN nuevo inválido.");
         }
     }
 
