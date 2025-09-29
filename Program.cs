@@ -1,4 +1,4 @@
-using CajeroAutomatico;
+﻿using CajeroAutomatico;
 
 class Program
 {
@@ -7,20 +7,67 @@ class Program
         var cajero = new Cajero();
         cajero.AsegurarUsuarioDemo();
 
-        System.Console.WriteLine("=== Cajero Automático - Inicio de Sesión ===");
+        // Inicio de sesión
+        System.Console.WriteLine("=== Cajero Automático ===");
         System.Console.Write("Usuario (Id o Nombre): ");
         var user = System.Console.ReadLine() ?? string.Empty;
         System.Console.Write("PIN: ");
         var pin = LeerPin();
 
-        if (cajero.IniciarSesion(user, pin))
+        if (!cajero.IniciarSesion(user, pin))
         {
-            var actual = cajero.ObtenerUsuarioActual();
-            System.Console.WriteLine($"\nBienvenido, {actual?.Nombre}. Inicio de sesión exitoso.");
+            System.Console.WriteLine("\nCredenciales incorrectas.");
+            return;
+        }
+
+        var actual = cajero.ObtenerUsuarioActual();
+        System.Console.WriteLine($"\nBienvenido, {actual?.Nombre}.");
+
+        // Menú principal
+        while (true)
+        {
+            System.Console.WriteLine("\n=== MENÚ PRINCIPAL ===");
+            System.Console.WriteLine("1. Depositar");
+            System.Console.WriteLine("2. Salir");
+            System.Console.Write("Seleccione una opción: ");
+            
+            var opcion = System.Console.ReadLine();
+            
+            switch (opcion)
+            {
+                case "1":
+                    RealizarDeposito(cajero);
+                    break;
+                case "2":
+                    System.Console.WriteLine("¡Hasta luego!");
+                    return;
+                default:
+                    System.Console.WriteLine("Opción inválida.");
+                    break;
+            }
+        }
+    }
+
+    private static void RealizarDeposito(Cajero cajero)
+    {
+        System.Console.Write("Ingrese el monto a depositar: ");
+        var input = System.Console.ReadLine();
+        
+        if (decimal.TryParse(input, out var monto))
+        {
+            if (cajero.Depositar(monto))
+            {
+                var usuario = cajero.ObtenerUsuarioActual();
+                System.Console.WriteLine($"Depósito exitoso. Nuevo saldo: ${usuario?.Saldo:F2}");
+            }
+            else
+            {
+                System.Console.WriteLine("Error: Monto inválido o no hay sesión activa.");
+            }
         }
         else
         {
-            System.Console.WriteLine("\nCredenciales incorrectas.");
+            System.Console.WriteLine("Error: Ingrese un monto válido.");
         }
     }
 
@@ -45,4 +92,4 @@ class Program
         System.Console.WriteLine();
         return pin;
     }
-} 
+}
