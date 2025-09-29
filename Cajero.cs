@@ -80,5 +80,11 @@ namespace CajeroAutomatico
             ArchivoHelper.GuardarUsuarios(_usuarios);
             return true;
         }
+
+        public decimal? ConsultarSaldo()
+        {
+            if (_usuarioActual == null) return null;
+            return _usuarioActual.Saldo;
+        }
     }
 }

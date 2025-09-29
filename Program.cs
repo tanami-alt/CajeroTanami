@@ -29,7 +29,8 @@ class Program
             System.Console.WriteLine("\n=== MENÚ PRINCIPAL ===");
             System.Console.WriteLine("1. Depositar");
             System.Console.WriteLine("2. Retirar");
-            System.Console.WriteLine("3. Salir");
+            System.Console.WriteLine("3. Consultar saldo");
+            System.Console.WriteLine("4. Salir");
             System.Console.Write("Seleccione una opción: ");
             
             var opcion = System.Console.ReadLine();
@@ -43,6 +44,9 @@ class Program
                     RealizarRetiro(cajero);
                     break;
                 case "3":
+                    RealizarConsultaSaldo(cajero);
+                    break;
+                case "4":
                     System.Console.WriteLine("¡Hasta luego!");
                     return;
                 default:
@@ -96,6 +100,17 @@ class Program
         {
             System.Console.WriteLine("Error: Ingrese un monto válido.");
         }
+    }
+
+    private static void RealizarConsultaSaldo(Cajero cajero)
+    {
+        var usuario = cajero.ObtenerUsuarioActual();
+        if (usuario == null)
+        {
+            System.Console.WriteLine("No hay sesión activa.");
+            return;
+        }
+        System.Console.WriteLine($"Saldo actual: ${usuario.Saldo:F2}");
     }
 
     private static string LeerPin()
