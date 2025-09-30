@@ -14,6 +14,12 @@ namespace CajeroAutomatico
             _usuarios = ArchivoHelper.CargarUsuarios();
         }
 
+        /// <summary>
+        /// Inicia sesión de un usuario validando sus credenciales
+        /// </summary>
+        /// <param name="identificador">ID o nombre del usuario</param>
+        /// <param name="pin">PIN de acceso del usuario</param>
+        /// <returns>True si las credenciales son correctas, False en caso contrario</returns>
         public bool IniciarSesion(string identificador, string pin)
         {
             var usuario = _usuarios.FirstOrDefault(u =>
