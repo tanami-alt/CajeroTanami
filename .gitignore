@@ -1,0 +1,77 @@
+﻿################################################################################
+# .gitignore para proyecto C# - Cajero Automático
+################################################################################
+
+# Archivos de compilación
+bin/
+obj/
+
+# Archivos de Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Archivos de usuario
+*.user
+*.userosscache
+*.sln.docstates
+
+# Archivos de build
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+
+# Archivos de Visual Studio Code
+.vscode/
+
+# Archivos de JetBrains Rider
+.idea/
+
+# Archivos de datos del proyecto (opcional - descomenta si no quieres versionar los CSV)
+# usuarios.csv
+# movimientos.csv
+
+# Archivos temporales
+*.tmp
+*.temp
+*.log
+
+# Archivos de sistema
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Archivos de backup
+*.bak
+*.backup
+*~
+
+# Archivos de documentación generados
+doc/
+docs/_build/
+
+# Archivos de pruebas
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+
+# Archivos de paquetes NuGet
+packages/
+*.nupkg
+*.snupkg
+
+# Archivos de configuración local
+appsettings.Development.json
+appsettings.Local.json
