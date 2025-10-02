@@ -56,6 +56,7 @@ namespace CajeroAutomatico
             }
         }
 
+        //Método para agregar un movimiento al archivo CSV
         public static void AgregarMovimiento(string usuarioId, Movimiento mov)
         {
             bool existe = File.Exists(MovimientosCsv);
@@ -65,36 +66,45 @@ namespace CajeroAutomatico
                 writer.WriteLine("UsuarioId,Fecha,Tipo,Monto,SaldoResultante");
             }
             writer.WriteLine(string.Join(',',
-                Escape(usuarioId),
-                mov.Fecha.ToString("o", CultureInfo.InvariantCulture),
-                Escape(mov.Tipo),
-                mov.Monto.ToString(CultureInfo.InvariantCulture),
-                mov.SaldoResultante.ToString(CultureInfo.InvariantCulture)));
+                (usuarioId),
+                mov.Fecha.ToString("o"),
+                (mov.Tipo),
+                mov.Monto.ToString(),
+                mov.SaldoResultante.ToString()));
         }
 
+        //Método para obtener los últimos movimientos de un usuario
         public static List<Movimiento> ObtenerUltimosMovimientos(string usuarioId, int cantidad)
         {
             var lista = new List<Movimiento>();
             if (!File.Exists(MovimientosCsv)) return lista;
 
-            var temp = new List<Movimiento>();
+            var temp = new List<Movimiento>(); // Lista temporal para almacenar todos los movimientos del usuario
             using var reader = new StreamReader(MovimientosCsv);
             string? header = reader.ReadLine();
+
             while (!reader.EndOfStream)
             {
                 var line = reader.ReadLine();
                 if (string.IsNullOrWhiteSpace(line)) continue;
+
                 var cols = ParseCsvLine(line);
-                if (cols.Count < 5) continue;
+                if (cols.Count < 5) continue; // Asegura que haya suficientes columnas
+
+                //Filtra solo los movimientos del usuario especificado
                 if (cols[0] != usuarioId) continue;
+
+                //Crea el objeto Movimiento y lo agrega a la lista temporal
                 temp.Add(new Movimiento
                 {
-                    Fecha = DateTime.TryParse(cols[1], null, DateTimeStyles.RoundtripKind, out var fecha) ? fecha : DateTime.MinValue,
+                    Fecha = DateTime.TryParse(cols[1], out var f) ? f : DateTime.MinValue,
                     Tipo = cols[2],
-                    Monto = decimal.TryParse(cols[3], NumberStyles.Any, CultureInfo.InvariantCulture, out var monto) ? monto : 0m,
-                    SaldoResultante = decimal.TryParse(cols[4], NumberStyles.Any, CultureInfo.InvariantCulture, out var saldo) ? saldo : 0m
+                    Monto = decimal.TryParse(cols[3], out var m) ? m : 0m,
+                    SaldoResultante = decimal.TryParse(cols[4], out var s) ? s : 0m
                 });
+
             }
+            //Ordena la lista temporal por fecha descendente y toma los últimos 'cantidad' movimientos
             return temp.OrderByDescending(t => t.Fecha).Take(cantidad).ToList();
         }
 
