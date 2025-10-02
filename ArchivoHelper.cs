@@ -101,26 +101,26 @@ namespace CajeroAutomatico
             return temp.OrderByDescending(t => t.Fecha).Take(cantidad).ToList();
         }
 
-        private static List<string> ParseCsvLine(string line)
-        {
-            var res = new List<string>();
-            bool quoted = false;
-            var cur = new System.Text.StringBuilder();
+        // Recorre cada carácter de la línea
             foreach (var c in line)
             {
-                if (c == '"') { quoted = !quoted; continue; }
-                if (c == ',' && !quoted)
+                if (c == '"')  // Alterna estado quoted al encontrar comilla
                 {
-                    res.Add(cur.ToString());
-                    cur.Clear();
+                    quoted = !quoted;
+                    continue;  // No agrega la comilla al campo
+                }
+                if (c == ',' && !quoted)  // Fin de campo si coma fuera de comillas
+                {
+                    res.Add(cur.ToString());  // Agrega campo actual
+                    cur.Clear();  // Reinicia builder
                 }
                 else
-                {
-                    cur.Append(c);
-                }
+{
+    cur.Append(c);  // Agrega carácter al campo actual
+}
             }
-            res.Add(cur.ToString());
-            return res;
+            res.Add(cur.ToString());  // Agrega el último campo
+         return res;  // Retorna lista de columnas
         }
     }
 } 
