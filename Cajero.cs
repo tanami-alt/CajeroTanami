@@ -14,7 +14,6 @@ namespace CajeroAutomatico
             _usuarios = ArchivoHelper.CargarUsuarios();
         }
 
-        )
 
         //Inicio de sesión donde se valida que las credenciales sea correctas
         public bool IniciarSesion(string identificador, string pin)
@@ -112,7 +111,7 @@ namespace CajeroAutomatico
             if (_usuarioActual.Pin != pinActual) return false;
             if (string.IsNullOrWhiteSpace(pinNuevo)) return false;
 
-            _usuarioActual.Pin = pinNuevo();
+            _usuarioActual.Pin = pinNuevo;
 
             var movimiento = new Movimiento
             {

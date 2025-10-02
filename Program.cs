@@ -32,7 +32,7 @@ class Program
         }
         var actual = cajero.ObtenerUsuarioActual();
 
-        System.Console.ForegroundColor = ConsoleColor.;
+        System.Console.ForegroundColor = ConsoleColor.Green;
         System.Console.WriteLine($"\nBienvenido, {actual?.Nombre}.");
         System.Console.ResetColor();
 
@@ -231,5 +231,35 @@ class Program
             System.Console.WriteLine("Error: PIN actual incorrecto o PIN nuevo inválido.");
             System.Console.ResetColor();
         }
+    }
+    // Método auxiliar para leer un PIN sin mostrarlo en pantalla
+    private static string LeerPin()
+    {
+        var pinBuilder = new System.Text.StringBuilder();
+        while (true)
+        {
+            var key = System.Console.ReadKey(intercept: true);
+            if (key.Key == ConsoleKey.Enter)
+            {
+                System.Console.WriteLine();
+                break;
+            }
+            if (key.Key == ConsoleKey.Backspace)
+            {
+                if (pinBuilder.Length > 0)
+                {
+                    pinBuilder.Length--;
+                    // borrar un caracter en pantalla
+                    System.Console.Write("\b \b");
+                }
+                continue;
+            }
+            if (!char.IsControl(key.KeyChar))
+            {
+                pinBuilder.Append(key.KeyChar);
+                System.Console.Write("*");
+            }
+        }
+        return pinBuilder.ToString();
     }
 }

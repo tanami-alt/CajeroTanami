@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace CajeroAutomatico
 {
@@ -11,7 +12,7 @@ namespace CajeroAutomatico
         private const string UsuariosCsv = "usuarios.csv";
         private const string MovimientosCsv = "movimientos.csv";
 
-        //Método para cargar los usuarios desde un archivo CSV
+        //MÃ©todo para cargar los usuarios desde un archivo CSV
         public static List<Usuario> CargarUsuarios()
         {
             var lista = new List<Usuario>();
@@ -33,14 +34,13 @@ namespace CajeroAutomatico
                     Id = cols[0],
                     Nombre = cols[1],
                     Pin = cols[2],
-                    Saldo = decimal.TryParse(cols[3], out var saldo) ? saldo : 0m;
-
+                    Saldo = decimal.TryParse(cols[3], NumberStyles.Any, CultureInfo.InvariantCulture, out var saldo) ? saldo : 0m
                 });
             }
             return lista;
         }
 
-        //Método para guardar los usuarios en un archivo CSV
+        //MÃ©todo para guardar los usuarios en un archivo CSV
         public static void GuardarUsuarios(IEnumerable<Usuario> usuarios)
         {
             using var writer = new StreamWriter(UsuariosCsv, false);
@@ -48,11 +48,11 @@ namespace CajeroAutomatico
 
             foreach (var u in usuarios)
             {
-                writer.WriteLine($"{u.Id},{u.Nombre},{u.Pin},{u.Saldo.ToString(CultureInfo.InvariantCulture)}")
+                writer.WriteLine($"{u.Id},{u.Nombre},{u.Pin},{u.Saldo.ToString(CultureInfo.InvariantCulture)}");
             }
         }
 
-        //Método para agregar un movimiento al archivo CSV
+        //MÃ©todo para agregar un movimiento al archivo CSV
         public static void AgregarMovimiento(string usuarioId, Movimiento mov)
         {
             bool existe = File.Exists(MovimientosCsv);
@@ -66,7 +66,7 @@ namespace CajeroAutomatico
 
         }
 
-        //Método para obtener los últimos movimientos de un usuario
+        //MÃ©todo para obtener los Ãºltimos movimientos de un usuario
         public static List<Movimiento> ObtenerUltimosMovimientos(string usuarioId, int cantidad)
         {
             var lista = new List<Movimiento>();
@@ -92,35 +92,51 @@ namespace CajeroAutomatico
                 {
                     Fecha = DateTime.TryParse(cols[1], out var f) ? f : DateTime.MinValue,
                     Tipo = cols[2],
-                    Monto = decimal.TryParse(cols[3], out var m) ? m : 0m,
-                    SaldoResultante = decimal.TryParse(cols[4], out var s) ? s : 0m
+                    Monto = decimal.TryParse(cols[3], NumberStyles.Any, CultureInfo.InvariantCulture, out var m) ? m : 0m,
+                    SaldoResultante = decimal.TryParse(cols[4], NumberStyles.Any, CultureInfo.InvariantCulture, out var s) ? s : 0m
                 });
 
             }
-            //Ordena la lista temporal por fecha descendente y toma los últimos 'cantidad' movimientos
+            //Ordena la lista temporal por fecha descendente y toma los Ãºltimos 'cantidad' movimientos
             return temp.OrderByDescending(t => t.Fecha).Take(cantidad).ToList();
         }
 
-        // Recorre cada carácter de la línea
-            foreach (var c in line)
+        // MÃ©todo auxiliar para parsear lÃ­neas CSV respetando comillas
+        private static List<string> ParseCsvLine(string line)
+        {
+            var result = new List<string>();
+            var current = new StringBuilder();
+            bool quoted = false;
+
+            for (int i = 0; i < line.Length; i++)
             {
-                if (c == '"')  // Alterna estado quoted al encontrar comilla
+                char c = line[i];
+                if (c == '"')
                 {
-                    quoted = !quoted;
-                    continue;  // No agrega la comilla al campo
+                    // Maneja comillas escapadas ""
+                    if (quoted && i + 1 < line.Length && line[i + 1] == '"')
+                    {
+                        current.Append('"');
+                        i++;
+                    }
+                    else
+                    {
+                        quoted = !quoted;
+                    }
                 }
-                if (c == ',' && !quoted)  // Fin de campo si coma fuera de comillas
+                else if (c == ',' && !quoted)
                 {
-                    res.Add(cur.ToString());  // Agrega campo actual
-                    cur.Clear();  // Reinicia builder
+                    result.Add(current.ToString());
+                    current.Clear();
                 }
                 else
-{
-    cur.Append(c);  // Agrega carácter al campo actual
-}
+                {
+                    current.Append(c);
+                }
             }
-            res.Add(cur.ToString());  // Agrega el último campo
-         return res;  // Retorna lista de columnas
+
+            result.Add(current.ToString());
+            return result;
         }
     }
-} 
+}
