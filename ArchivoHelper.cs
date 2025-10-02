@@ -48,11 +48,7 @@ namespace CajeroAutomatico
 
             foreach (var u in usuarios)
             {
-                writer.WriteLine(string.Join(',',
-                    Escape(u.Id),
-                    Escape(u.Nombre),
-                    Escape(u.Pin),
-                    u.Saldo.ToString()));
+                writer.WriteLine($"{u.Id},{u.Nombre},{u.Pin},{u.Saldo.ToString(CultureInfo.InvariantCulture)}")
             }
         }
 
@@ -65,12 +61,9 @@ namespace CajeroAutomatico
             {
                 writer.WriteLine("UsuarioId,Fecha,Tipo,Monto,SaldoResultante");
             }
-            writer.WriteLine(string.Join(',',
-                (usuarioId),
-                mov.Fecha.ToString("o"),
-                (mov.Tipo),
-                mov.Monto.ToString(),
-                mov.SaldoResultante.ToString()));
+            writer.WriteLine($"{usuarioId},{mov.Fecha:o},{mov.Tipo},{mov.Monto.ToString(CultureInfo.InvariantCulture)}," +
+                $"{mov.SaldoResultante.ToString(CultureInfo.InvariantCulture)}");
+
         }
 
         //Método para obtener los últimos movimientos de un usuario
@@ -106,16 +99,6 @@ namespace CajeroAutomatico
             }
             //Ordena la lista temporal por fecha descendente y toma los últimos 'cantidad' movimientos
             return temp.OrderByDescending(t => t.Fecha).Take(cantidad).ToList();
-        }
-
-        private static string Escape(string? valor)
-        {
-            valor ??= string.Empty;
-            if (valor.Contains(',') || valor.Contains('"'))
-            {
-                return "\"" + valor.Replace("\"", "\"\"") + "\"";
-            }
-            return valor;
         }
 
         private static List<string> ParseCsvLine(string line)
