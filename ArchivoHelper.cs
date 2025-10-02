@@ -49,7 +49,7 @@ namespace CajeroAutomatico
             foreach (var u in usuarios)
             {
                 writer.WriteLine($"{u.Id},{u.Nombre},{u.Pin},{u.Saldo.ToString
-                    (CultureInfo.InvariantCulture)}");
+                (CultureInfo.InvariantCulture)}");
             }
         }
 
@@ -65,7 +65,6 @@ namespace CajeroAutomatico
             writer.WriteLine($"{usuarioId},{mov.Fecha:o},{mov.Tipo}," +
                 $"{mov.Monto.ToString(CultureInfo.InvariantCulture)}," +
                 $"{mov.SaldoResultante.ToString(CultureInfo.InvariantCulture)}");
-            ;
         }
 
         //Método para obtener los últimos movimientos de un usuario
