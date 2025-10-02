@@ -11,6 +11,7 @@ namespace CajeroAutomatico
         private const string UsuariosCsv = "usuarios.csv";
         private const string MovimientosCsv = "movimientos.csv";
 
+        //Método para cargar los usuarios desde un archivo CSV
         public static List<Usuario> CargarUsuarios()
         {
             var lista = new List<Usuario>();
@@ -18,34 +19,40 @@ namespace CajeroAutomatico
 
             using var reader = new StreamReader(UsuariosCsv);
             string? header = reader.ReadLine();
+
             while (!reader.EndOfStream)
             {
                 var line = reader.ReadLine();
                 if (string.IsNullOrWhiteSpace(line)) continue;
+
                 var cols = ParseCsvLine(line);
-                if (cols.Count < 4) continue;
+                if (cols.Count < 4) continue; // Asegura que haya suficientes columnas
+
                 lista.Add(new Usuario
                 {
                     Id = cols[0],
                     Nombre = cols[1],
                     Pin = cols[2],
-                    Saldo = decimal.TryParse(cols[3], NumberStyles.Any, CultureInfo.InvariantCulture, out var saldo) ? saldo : 0m
+                    Saldo = decimal.TryParse(cols[3], out var saldo) ? saldo : 0m;
+
                 });
             }
             return lista;
         }
 
+        //Método para guardar los usuarios en un archivo CSV
         public static void GuardarUsuarios(IEnumerable<Usuario> usuarios)
         {
             using var writer = new StreamWriter(UsuariosCsv, false);
             writer.WriteLine("Id,Nombre,Pin,Saldo");
+
             foreach (var u in usuarios)
             {
                 writer.WriteLine(string.Join(',',
                     Escape(u.Id),
                     Escape(u.Nombre),
                     Escape(u.Pin),
-                    u.Saldo.ToString(CultureInfo.InvariantCulture)));
+                    u.Saldo.ToString()));
             }
         }
 
